@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Hierarchy</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+   
+   <script>
+              function loadCategory(){
+                fetch("https://fakestoreapi.com/products/categories")
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(data){
+                    data.unshift("All");
+                    for(var item of data){
+
+                        var option=document.createElement("option");
+                        option.text=item.toUpperCase();
+                        option.value=item;
+
+                        document.getElementById("lstCategory").appendChild(option);
+                    }
+                })
+              }
+               function loadProducts(url){
+                document.getElementById("catalog").innerHTML="";
+                fetch(url)
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(data){
+                    for(var item of data){
+
+                        var div=document.createElement("div");
+                        div.className="card shadow p-1 ms-4 mt-2";
+                        div.style.width="18rem";
+                        div.innerHTML=`
+                        <img src=${item.image} class="card-img-top" style="height:8rem">
+                        <div class="card-header">
+                            <p class="text-muted">${item.title}</p>
+                            <p>${item.price}</p>
+                        </div>
+                        <div class="card-body text-center">
+                            <h3>Rating</h3>
+                            <span class="bi bi-star-fill"></span>
+                            <span class="bi bi-star-fill"></span>
+                            <span class="bi bi-star-fill"></span>
+                            <span class="bi bi-star-fill"></span>
+                            <span class="bi bi-star-half-fill"></span>${item.rating.rate} [ <span> ${item.rating.count} </span>]
+                        </div>
+
+                        <div class="card-footer">
+                           <button onclick="AddToClick(${item.id})" class="btn btn-danger w-100">
+                            <span class="bi bi-cart4"></span> Add to Cart
+                           </button>
+                        </div>
+                        
+                        `;
+
+                        document.getElementById("catalog").appendChild(div);
+                    }
+                })
+               }
+
+               function CategoryChange(){
+                 var categoryname=document.getElementById("lstCategory").value;
+                 if(categoryname=="All")
+                 {
+                    loadProducts("https://fakestoreapi.com/products");
+                 }else {
+                    loadProducts(`https://fakestoreapi.com/products/category/${categoryname}`);
+                 }
+               }
+              function bodyLoad(){
+                loadCategory();
+                loadProducts("https://fakestoreapi.com/products");
+                getCartItemsCount();
+              }
+                var cartItems=[];
+                function getCartItemsCount(){
+                    document.getElementById("lblCount").innerHTML=cartItems.length;
+                }
+              function AddToClick(id){
+                   fetch(`https://fakestoreapi.com/products/${id}`)
+                   .then(function(response){
+                    return response.json();
+                   })
+                   .then(function(data){
+                    alert(`${data.title} \n added to cart`);
+                      cartItems.push(data);
+                      getCartItemsCount();
+                   })
+              }
+              function showItem(){
+                document.querySelector("tbody").innerHTML="";
+                document.querySelector("tfoot").innerHTML="";
+                for(let item of cartItems){
+                     
+                    var tr=document.createElement("tr");
+                    var tdTitle=document.createElement("td");
+                    var tdPrice=document.createElement("td");
+                    var tdPhoto=document.createElement("td");
+                    var tdDetails=document.createElement("td");
+                    var tdDelete=document.createElement("td");
+
+                    var btndetails=document.createElement("button");
+                    btndetails.innerHTML=`<span data-bs-toggle="modal" data-bs-target="#details"  class="bi bi-eye"></span>`;
+                    btndetails.className="btn btn-success";
+                    tdDetails.appendChild(btndetails);
+
+                    btndetails.onclick=function(){
+                        alert(`${item.id}`);
+
+                        document.getElementById("lblTitle").innerHTML=item.title;
+                        document.getElementById("lblPrice").innerHTML=item.price;
+                        document.getElementById("lblPhoto").src=item.image;
+
+                    }
+
+                   
+
+
+                    var btndelete=document.createElement("button");
+                    btndelete.innerHTML=`<span  class="bi bi-trash-fill"></span>`;
+                    btndelete.className="btn btn-danger";
+                    tdDelete.appendChild(btndelete);
+
+                    btndelete.onclick=function(){
+                        alert(`${item.id}`);
+
+                       var Index=cartItems.indexOf(item);
+                       cartItems.splice(Index,1);
+                       alert(`${Index}`);
+                       getCartItemsCount();
+
+                    }
+
+                    tdTitle.innerHTML=item.title;
+                    tdPrice.innerHTML=item.price;
+
+                    var pic=document.createElement("img");
+                    pic.width="60";
+                    pic.height="60"
+                    pic.src=item.image;
+                    tdPhoto.appendChild(pic);
+
+                    tr.appendChild(tdTitle);
+                    tr.appendChild(tdPrice);
+                    tr.appendChild(tdPhoto);
+                    tr.appendChild(tdDetails);
+                    tr.appendChild(tdDelete);
+
+                    document.querySelector("tbody").appendChild(tr);
+                }
+
+                            var total=0;
+                           for(let i=0;i<cartItems.length;i++){
+       
+                           total += (cartItems[i].price);
+            
+                           }
+                             console.log(total)
+
+                 var tr2=document.createElement("tr");
+                  
+                 var tdtotal=document.createElement("td");
+                 var tdtotalPrice=document.createElement("td");
+                 var tdtotalPay=document.createElement("td");
+                 tdtotal.innerHTML="Total" ;
+                 tdtotalPrice.innerHTML=`${total}`;
+
+                 var btnPay=document.createElement("button");
+                    btnPay.innerHTML="Pay";
+                    btnPay.className="btn btn-success w-100";
+                    tdtotalPay.colSpan="3";
+                    tdtotalPay.className="text-end";
+                    
+                    tdtotalPay.appendChild(btnPay);
+
+                    btnPay.onclick=function(){
+                        document.write(`<div style='color:green; text-align:center;'><b><i> <h1>You have successfully paid your amount <span style='color:red;'> &dollar; ${total} </span><br> You will soon receiver your items </h1></i></b></div>`);
+
+                    }
+                 tr2.appendChild(tdtotal);
+                 tr2.appendChild(tdtotalPrice);
+                 tr2.appendChild(tdtotalPay);
+                 document.querySelector("tfoot").appendChild(tr2);
+              }
+   </script>
+      
+</head>
+<body onload="bodyLoad()">
+ <header class="bg-danger text-center p-1 text-white">
+    <h2><span class="bi bi-cart3"></span> FakeStore</h2>
+ </header>
+ <section class="row">
+       <nav class="col-2">
+              <div class="ms-2">
+                     <label class="form-label">Select a Category</label>
+                     <div>
+                        <select onchange="CategoryChange()" id="lstCategory" class="form-select">
+                           
+                        </select>
+                     </div>
+              </div>
+       </nav>
+       <main class="col-8">
+           <div id="catalog" class="d-flex flex-wrap overflow-auto" style="height:650px;">
+
+           </div>
+       </main>
+       <aside class="col-2">
+        <div class="mt-2 me-2">
+            <button data-bs-target="#showitem" data-bs-toggle="modal" onclick="showItem()" class="btn btn-danger w-100">
+               <span class="bi bi-cart4"></span> [ <span id="lblCount"></span> ] Your Cart Items
+            </button>
+       </div>
+       </aside>
+     
+ </section>
+
+ <div class="modal" id="showitem">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Your cart Items</h4>
+            <button data-bs-dismiss="modal" class="btn-close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-hover table-light table-bordered table-striped">
+                 <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Photo</th>
+                        <th colspan="2">Action</th>
+                    </tr>
+                 </thead>
+                 <tbody>
+
+                 </tbody>
+                 <tfoot>
+                          
+                 </tfoot>
+            </table>
+        </div>
+    </div>
+  </div>
+ </div>
+
+
+ <div class="modal" id="details">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <p class="card-text">Your Items details</p>
+              <button data-bs-dismiss="modal" class="btn-close"></button>
+          </div>
+          <div class="modal-body">
+             <dl class="row">
+                <dt class="col-3">Title</dt>
+                <dd class="col-9" id="lblTitle"></dd>
+                <dt class="col-3">Price</dt>
+                <dd class="col-9" id="lblPrice"></dd>
+                <dt class="col-3">Photo</dt>
+                <dd class="col-9">
+                    <img id="lblPhoto" width="60px" height="60px">
+                </dd>
+             </dl>
+          </div>
+      </div>
+    </div>
+   </div>
+
+
+ <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+</body>
+</html>
