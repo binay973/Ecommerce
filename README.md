@@ -6,7 +6,11 @@ CSS: Styling language used for designing the layout and appearance of the web pa
 JavaScript: Programming language used for adding interactivity and dynamic behavior to the web page.
 Bootstrap: Front-end framework used for building responsive and mobile-first websites.
 Fetch API: JavaScript interface for fetching resources (such as JSON data) asynchronously across the network.
+
+
+
 Functionality:
+
 
 Fetches categories of products from the FakeStore API and populates a dropdown menu.
 Fetches products based on the selected category and displays them as cards with images, titles, prices, ratings, and an "Add to Cart" button.
