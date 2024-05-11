@@ -22,3 +22,7 @@ Allows users to remove items from the cart by clicking the "trash" icon, which r
 Calculates and displays the total price of items in the cart dynamically.
 Allows users to pay for the items in the cart by clicking the "Pay" button, which displays a confirmation message indicating the successful payment with the total amount.
 Overall, this web page provides a user-friendly interface for browsing products, adding them to the cart, managing the cart contents, and completing the purchase process.
+
+
+![image](https://github.com/binay973/Ecommerce/assets/64780356/0014f654-3872-46df-a968-05156ae0302a)
+
